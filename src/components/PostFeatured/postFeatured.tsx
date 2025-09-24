@@ -1,9 +1,19 @@
+import ErrorMessage from "../ErrorMessage/errorMessage";
 import { PostCoverImage } from "../PostCoverImage/postCoverImage";
 import { PostSummary } from "../PostSumary/postSumary";
-import { findAllPublicPosts } from "@/lib/post/queries";
+import { findAllPublicPostsCached } from "@/lib/post/queries/public";
 
 export async function PostFeatured() {
-  const posts = await findAllPublicPosts();
+  const posts = await findAllPublicPostsCached();
+
+  if (posts.length <= 0)
+    return (
+      <ErrorMessage
+        contenTitle="Ops!"
+        content="Ainda não existe nenhum post."
+      />
+    );
+
   const post = posts[0];
 
   const postLink = `/post/${post.slug}`;

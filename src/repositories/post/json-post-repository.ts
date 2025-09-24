@@ -2,6 +2,7 @@ import { PostModel } from "@/models/post/post-model";
 import { resolve } from "path";
 import { readFile } from "fs/promises";
 import { PostRepository } from "./post-repository";
+import { SIMULATE_WAIT_IN_MS } from "@/lib/constants";
 
 const ROOT_DIR = process.cwd();
 const JSON_POSTS_FILE_PATH = resolve(
@@ -11,7 +12,6 @@ const JSON_POSTS_FILE_PATH = resolve(
   "seed",
   "posts.json"
 );
-const SIMULATE_WAIT_IN_MS = 50000;
 
 export class JsonPostRepository implements PostRepository {
   private async simulateWait() {
@@ -36,8 +36,7 @@ export class JsonPostRepository implements PostRepository {
   async findAllPublic(): Promise<PostModel[]> {
     await this.simulateWait();
 
-    const posts = await this.readFromDisk();
-    return posts.filter((post) => post.published);
+    return await this.readFromDisk();
   }
 
   async findById(id: string): Promise<PostModel> {
