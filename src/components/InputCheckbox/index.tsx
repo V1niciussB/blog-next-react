@@ -25,6 +25,7 @@ export function InputCheckbox({
         )}
         id={id}
         type={type}
+        {...props}
       />
 
       {labelText && (

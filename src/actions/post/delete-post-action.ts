@@ -1,19 +1,17 @@
 "use server";
 
-import { drizzleDb } from "@/db/drizzle";
-import { postsTable } from "@/db/drizzle/schemas";
+import { verifyLoginSession } from "@/lib/LOGIN/manage-login";
 import { postRepository } from "@/repositories/post";
-import { asyncDelay } from "@/utils/async-delay";
-import { logColor } from "@/utils/log-color";
-import { eq } from "drizzle-orm";
 import { revalidateTag } from "next/cache";
 
 export async function deletePostAction(id: string) {
-  // TODO: checar login do usuário
+  const isAuthenticated = await verifyLoginSession();
 
-  // TODO: remover linhas abaixo
-  await asyncDelay(2000);
-  logColor("" + id);
+  if (!isAuthenticated) {
+    return {
+      error: "Faça login novamente",
+    };
+  }
 
   if (!id || typeof id !== "string") {
     return {
@@ -21,20 +19,23 @@ export async function deletePostAction(id: string) {
     };
   }
 
-  const post = await postRepository.findById(id).catch(() => undefined);
+  let post;
+  try {
+    post = await postRepository.delete(id);
+  } catch (e: unknown) {
+    if (e instanceof Error) {
+      return {
+        error: e.message,
+      };
+    }
 
-  if (!post) {
     return {
-      error: "Post não existe",
+      error: "Erro desconhecido",
     };
   }
 
-  // TODO: mover este método para o repositório
-  await drizzleDb.delete(postsTable).where(eq(postsTable.id, id));
-
-  // TODO: revalidateTag ou revalidatePath
-  // revalidateTag("posts");
-  // revalidateTag(`post-${post.slug}`);
+  revalidateTag("posts");
+  revalidateTag(`post-${post.slug}`);
 
   return {
     error: "",

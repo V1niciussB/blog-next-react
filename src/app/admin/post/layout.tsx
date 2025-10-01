@@ -1,16 +1,15 @@
-import { Container } from "@/components/Container/container";
-import { Header } from "@/components/Header/header";
-import { Footer } from "@/components/Footer/footer";
-import { ToastifyContainer } from "@/components/ToastifyContainer";
 import { MenuAdmin } from "../MenuAdmin";
+import { requireLoginSessionOrRedirect } from "@/lib/LOGIN/manage-login";
 
 type AdminPostLayoutProps = {
   children: React.ReactNode;
 };
 
-export default function AdminPostLayout({
+export default async function AdminPostLayout({
   children,
 }: Readonly<AdminPostLayoutProps>) {
+  await requireLoginSessionOrRedirect();
+
   return (
     <>
       <MenuAdmin />

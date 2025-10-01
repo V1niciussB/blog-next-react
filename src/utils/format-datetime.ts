@@ -19,5 +19,3 @@ export function formatRelativeDate(rawDate: string): string {
 }
 
 const rawDate = "2025-04-12T06:31:23.411Z";
-console.log(rawDate);
-console.log(formatRelativeDate(rawDate));

@@ -1,5 +1,5 @@
 import { ManagePostForm } from "@/components/admin/ManagePostForm";
-import { makePublicPost } from "@/dto/post/dto";
+import { makePublicPostFromDb } from "@/dto/post/dto";
 import { findPostByIdAdmin } from "@/lib/post/queries/admin";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -24,12 +24,12 @@ export default async function AdminPostIdPage({
 
   if (!post) notFound();
 
-  const publicPost = makePublicPost(post);
+  const publicPost = makePublicPostFromDb(post);
 
   return (
     <div className=" flex flex-col gap-6">
       <h1 className="text-xl font-extrabold">Editar Post</h1>
-      <ManagePostForm publicPost={publicPost} />
+      <ManagePostForm mode="update" publicPost={publicPost} />
     </div>
   );
 }
